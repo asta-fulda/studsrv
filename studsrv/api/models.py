@@ -55,7 +55,6 @@ class Project(models.Model):
     
     client.create_container(image = self.image.image,
                             hostname = self.name,
-                            network_disabled = False,
                             name = self.container,
                             volumes = {'/data': {}})
   
