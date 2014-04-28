@@ -81,7 +81,7 @@ class Project(models.Model):
 
   @property
   def volume(self):
-    return os.path.join('/var/stud', self.name)
+    return os.path.join('/mnt/projects', self.name)
 
 
   @property
@@ -94,4 +94,4 @@ class Project(models.Model):
 
   @property
   def url(self):
-    return 'http://%s.stud.hs-fulda.org' % self.name
+    return 'http://%s.stud-new.hs-fulda.org' % self.name
