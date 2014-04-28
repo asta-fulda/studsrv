@@ -1,0 +1,25 @@
+== Install debian jessie
+Install debian jessie as usual.
+
+
+== Create a btrfs valumes
+  apt-get install btrfs-tools
+
+Create the BTRFS root volume:
+  mkfs.btrfs /dev/vdb
+
+Mount the volume:
+  echo '/dev/vdb /mnt btrfs noatime,space_cache 0 0' >> /etc/fstab
+  mount -av
+
+Create sub-volumes for containers, users, and projects:
+  btrfs subvolume create /mnt/containers
+  btrfs subvolume create /mnt/users
+  btrfs subvolume create /mnt/projects
+
+== Install and configure docker
+  apt-get install docker.io btrfs-tools
+
+Make docker user the BTRFS sub-volume:
+  echo 'DOCKER_OPTS="--storage-driver=btrfs --graph=/mnt/containers' >> /etc/defaults/docker.io
+

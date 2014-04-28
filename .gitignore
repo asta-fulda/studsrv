@@ -1,0 +1,7 @@
+*.swp
+*.pyc
+.project
+.pydevproject
+.settings/
+__pycache__/
+db.sqlite3
