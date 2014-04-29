@@ -10,6 +10,5 @@ urlpatterns = patterns('',
   url(r'^project/(?P<name>\w+)/$', views.ProjectDetailsView.as_view(), name = 'studsrv.frontend.project.details'),
   url(r'^project/(?P<name>\w+)/start$', views.ProjectStartView.as_view(), name = 'studsrv.frontend.project.start'),
   url(r'^project/(?P<name>\w+)/stop$', views.ProjectStopView.as_view(), name = 'studsrv.frontend.project.stop'),
-  url(r'^project/(?P<name>\w+)/delete$', views.ProjectDeleteView.as_view(), name = 'studsrv.frontend.project.delete'),
 )
 

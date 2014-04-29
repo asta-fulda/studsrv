@@ -17,9 +17,48 @@ Create sub-volumes for containers, users, and projects:
   btrfs subvolume create /mnt/users
   btrfs subvolume create /mnt/projects
 
+  btrfs quota enable /mnt/projects
+
+
 == Install and configure docker
   apt-get install docker.io btrfs-tools
 
 Make docker user the BTRFS sub-volume:
   echo 'DOCKER_OPTS="--storage-driver=btrfs --graph=/mnt/containers' >> /etc/defaults/docker.io
+
+Restart docker:
+  service docker.io restart
+
+
+== Install and configure the mangement interface
+  apt-get install git python2.7 python-django python-docker python-bootstrapform
+
+Fetch the latest version from GIT:
+  git clone https://github.com/fooker/studsrv.git
+
+Create the database schema:
+  python manage.py syncdb
+
+
+== Install and configure nginx
+  apt-get install nginx
+
+Copy the configuration file:
+  cp resources/nginx.conf /etc/nginx/sites-available/default
+
+Reload the configuration:
+  service nginx restart
+
+
+== Build the container image
+Build all available images
+  for IMAGE in images/*; do (
+    cd ${IMAGE}
+    TAG=$(basename ${IMAGE})
+    docker.io build --tag=${TAG} .
+  ); done
+
+
+== Start the management interface
+  python management.py runserver
 

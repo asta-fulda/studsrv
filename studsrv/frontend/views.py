@@ -1,8 +1,8 @@
 from django.views.generic import TemplateView, RedirectView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView
 from django.core import urlresolvers
 
-from studsrv.api.models import Project
+from studsrv.api.services import images, projects
 from studsrv.frontend.forms import AddProjectForm
 
 
@@ -11,7 +11,8 @@ class BaseMixin(object):
   
   @property
   def projects(self):
-    return Project.objects.all()
+    # TODO: Pass user
+    return projects.getProjectsForUser(None)
 
 
 
@@ -20,28 +21,35 @@ class IndexView(BaseMixin, TemplateView):
 
 
 
-class ProjectCreateView(BaseMixin, CreateView):
+class ProjectCreateView(BaseMixin, FormView):
   template_name = 'studsrv/frontend/project_create.html'
   form_class = AddProjectForm
   
   
   def get_success_url(self):
     return urlresolvers.reverse('studsrv.frontend.project.details',
-                                kwargs={'name': self.object.name})
+                                kwargs = self.kwargs)
   
   
   def form_valid(self, form):
-    form.instance.create()
+    projects.createProject(name = form.cleaned_data['name'],
+                           image_id = form.cleaned_data['image'],
+                           description = form.cleaned_data['description'])
     
-    return CreateView.form_valid(self, form)
+    return FormView.form_valid(self, form)
   
   
 
 class ProjectMixin(object):
   
   @property
+  def name(self):
+    return self.kwargs['name']
+  
+  
+  @property
   def project(self):
-    return Project.objects.get(pk = self.kwargs['name'])
+    return projects.getProjectInfo(self.name)
 
 
 
@@ -55,7 +63,7 @@ class ProjectStartView(ProjectMixin, RedirectView):
   
   
   def post(self, request, *args, **kwargs):
-    self.project.start()
+    projects.startProject(self.name)
     
     return super(ProjectStartView, self).post(request, *args, **kwargs)
 
@@ -66,19 +74,8 @@ class ProjectStopView(ProjectMixin, RedirectView):
   
   
   def post(self, request, *args, **kwargs):
-    self.project.stop()
+    projects.stopProject(self.name)
     
     return super(ProjectStopView, self).post(request, *args, **kwargs)
-
-
-
-class ProjectDeleteView(ProjectMixin, RedirectView):
-  pattern_name = 'studsrv.frontend.index'
-  
-  
-  def post(self, request, *args, **kwargs):
-    self.project.stop()
-    
-    return super(ProjectDeleteView, self).post(request, *args, **kwargs)
   
   

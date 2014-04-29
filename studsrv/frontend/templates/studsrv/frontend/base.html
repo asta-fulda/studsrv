@@ -49,8 +49,8 @@
                 {% if view.projects %}
 	                <ul class="nav nav-sidebar">
 	                    {% for project in view.projects %}
-	                        <li class="{% if project.name == name %}active{% endif %}">
-	                            <a href="{% url 'studsrv.frontend.project.details' project.name %}">{{project.name}}</a>
+	                        <li class="{% if project == name %}active{% endif %}">
+	                            <a href="{% url 'studsrv.frontend.project.details' project %}">{{project}}</a>
 	                        </li>
 	                    {% endfor %}
 	                </ul>

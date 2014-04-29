@@ -1,30 +1,20 @@
 from django.db import models
 
-import os.path
-import docker
-
-
-
-client = docker.Client()
-
 
 
 class Image(models.Model):
-  name = models.SlugField(primary_key = True,
-                          default = None,
-                          max_length = 256)
+  image_id = models.SlugField(primary_key = True,
+                              default = None,
+                              max_length = 256)
   
   title = models.CharField(default = None,
-                          max_length = 256)
+                           max_length = 256)
 
   description = models.TextField()
 
-  image = models.CharField(default = None,
-                           max_length = 256)
-
 
   def __unicode__(self):
-      return self.name
+      return self.image_id
 
 
 
@@ -37,6 +27,9 @@ class Project(models.Model):
   image = models.ForeignKey(Image)
 
   description = models.TextField(blank = True)
+  
+  container_id = models.CharField(default = None,
+                                  max_length = 64)
 
   created = models.DateTimeField(auto_now_add = True)
   
@@ -48,49 +41,3 @@ class Project(models.Model):
 
   def __unicode__(self):
     return self.name
-  
-  
-  def create(self):
-    os.mkdir(self.volume)
-    
-    client.create_container(image = self.image.image,
-                            hostname = self.name,
-                            name = self.container,
-                            volumes = {'/data': {}})
-  
-  
-  def destroy(self):
-    client.remove_container(container = self.container,
-                            v = True)
-  
-  
-  def start(self):
-    client.start(container = self.container,
-                 binds = {self.volume: '/data'})
-  
-  
-  def stop(self):
-    client.stop(container = self.container)
-
-
-  @property
-  def container(self):
-    return '%s.stud' % self.name
-
-
-  @property
-  def volume(self):
-    return os.path.join('/mnt/projects', self.name)
-
-
-  @property
-  def running(self):
-    try:
-      return client.inspect_container(container = self.container)['State']['Running']
-    except:
-      return False
-
-
-  @property
-  def url(self):
-    return 'http://%s.stud-new.hs-fulda.org' % self.name
