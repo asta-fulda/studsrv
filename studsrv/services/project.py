@@ -10,6 +10,7 @@ import docker
 from studsrv import db
 
 from studsrv.services.config import configs
+from studsrv.services.image import images
 
 
 
@@ -28,7 +29,7 @@ class Admin(object):
     ''' Returns the username of the user.
     '''
     
-    return self.__record.id
+    return str(self.__record.id)
   
   
   @property
@@ -82,7 +83,7 @@ class Project(object):
     ''' Returns the image name of the project.
     '''
     
-    return self.__record.image
+    return images.getImage(name = self.__record.image)
   
   
   @property
@@ -183,7 +184,7 @@ class Project(object):
     
     return (Admin(record)
             for record
-            in self.__record.admins)
+            in self.__record.admins.values())
   
   
   def addAdmin(self,
@@ -218,7 +219,7 @@ class Project(object):
         of this project.
     '''
     
-    admin = Admin(self.__record.admins[username])
+    admin = Admin(record = self.__record.admins[username])
     
     # Remove the admin record from the project
     del self.__record.admins[username]

@@ -21,9 +21,15 @@ class Image(object):
 
 
 class ImageService(object):
+  images = {'static': Image('static', 'Statische Webseite')}
+  
   def getImages(self):
-    return [Image(name = 'static',
-                  title = 'Statische Webseite')]
+    return self.images.keys()
+    
+    
+  def getImage(self,
+               name):
+    return self.images[name]
 
 
 images = ImageService()

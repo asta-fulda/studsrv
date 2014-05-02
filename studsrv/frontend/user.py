@@ -39,7 +39,9 @@ class ProjectCreateView(UserTemplateMixin,
     image = fields.RadioField('Typ',
                               choices = [(image.name, image.title)
                                          for image
-                                         in images.getImages()],
+                                         in (images.getImage(name = name)
+                                             for name
+                                             in images.getImages())],
                               description = '''Der Typ des Projekts bestimmt,
                                                welche Funktionen in dem Projekt
                                                zur Verfügung stehen''')
