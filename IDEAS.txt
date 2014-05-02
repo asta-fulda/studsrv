@@ -8,7 +8,11 @@
     container
 
 * Allow access to the project containers log
+  - Show the log in the frontend
   - Write the log to the project data folder
   - Make the logs read-only
   - Rotate the log files using log-rotate
   - Exclude the logs from quota
+
+* Reload images.ini on changes
+  - Use inotify to wait for changes

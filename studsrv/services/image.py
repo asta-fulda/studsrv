@@ -1,3 +1,4 @@
+import configparser
 
 
 
@@ -21,15 +22,28 @@ class Image(object):
 
 
 class ImageService(object):
-  images = {'static': Image('static', 'Statische Webseite')}
+  PATH = '/etc/studsrv/images.ini'
+  
+  
+  def __init__(self):
+    parser = configparser.SafeConfigParser()
+    parser.read('/etc/studsrv/images.ini')
+    
+    self.__images = {name: Image(name = name,
+                                 title = section['title'])
+                     for name, section
+                     in ((name, parser[name])
+                         for name
+                         in parser.sections())}
+
   
   def getImages(self):
-    return self.images.keys()
+    return self.__images.keys()
     
     
   def getImage(self,
                name):
-    return self.images[name]
+    return self.__images[name]
 
 
 images = ImageService()
