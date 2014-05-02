@@ -30,7 +30,8 @@ class ProjectCreateView(UserTemplateMixin,
   class form_class(form.Form):
     # TODO: Validate names uniqueness
     name = fields.TextField('Name',
-                            validators = [validators.Length(min = 4, max = 63)],
+                            validators = [validators.Length(min = 1, max = 63),
+                                          validators.Regexp(r'^([a-zA-Z0-9_\-])+$')],
                             description = '''Der Name deines Projekts - der Name
                                              wird verwendet, um das Projekt
                                              aufzurufen und darf nur aus
