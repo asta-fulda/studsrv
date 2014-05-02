@@ -3,7 +3,7 @@ from flask.ext import login
 from wtforms import form, fields, validators
 
 from studsrv.frontend.utils import TemplateView, FormView, ActionView
-from studsrv.services.user import users
+from studsrv.services.login import logins
   
 
 
@@ -24,7 +24,7 @@ class LoginView(FormView):
     remember = fields.BooleanField()
     
     def validate_password(self, field):
-      if not users.authenticateUser(username = self.username.data,
+      if not logins.authenticateUser(username = self.username.data,
                                     password = self.password.data):
         raise validators.ValidationError('Benutzname oder Passwort falsch')
   
@@ -34,7 +34,7 @@ class LoginView(FormView):
             password,
             remember):
     # Get the user instance
-    user = users.getUser(username = username)
+    user = logins.getUser(username = username)
     
     # Login
     login.login_user(user = user,

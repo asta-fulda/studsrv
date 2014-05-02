@@ -1,7 +1,10 @@
+from flask.ext import login
+
 from wtforms import form, fields, validators
 
 from studsrv.frontend.utils import TemplateView, FormView, ActionView
 
+from studsrv.services.image import images
 from studsrv.services.project import projects
 
 
@@ -9,8 +12,7 @@ from studsrv.services.project import projects
 class UserTemplateMixin(object):
   @property
   def projects(self):
-    # TODO: Pass user from session
-    return list(projects.getProjectsForUser(user = None))
+    return list(projects.getProjects(username = login.current_user.id))
 
 
 
@@ -35,7 +37,9 @@ class ProjectCreateView(UserTemplateMixin,
                                              Buchstaben und Zahlen bestehen''')
     
     image = fields.RadioField('Typ',
-                              choices = [('static', 'Statische Webseite')],
+                              choices = [(image.name, image.title)
+                                         for image
+                                         in images.getImages()],
                               description = '''Der Typ des Projekts bestimmt,
                                                welche Funktionen in dem Projekt
                                                zur Verfügung stehen''')
@@ -64,7 +68,8 @@ class ProjectCreateView(UserTemplateMixin,
             image,
             description,
             public):
-    projects.createProject(name = name,
+    projects.createProject(username = login.current_user.id,
+                           name = name,
                            image = image,
                            description = description,
                            public = public)
@@ -74,30 +79,56 @@ class ProjectCreateView(UserTemplateMixin,
 
 
 
-class ProjectDetailsView(UserTemplateMixin,
-                         TemplateView):
-  template = 'user/project/details.html'
-  
-  
+class ProjectTemplateMixin(object):
   @property
   def project(self):
-    return projects.getProjectByName(self.name)
+    return projects.getProject(username = login.current_user.id,
+                               name = self.name)
 
 
 
-class ProjectStartView(ActionView):
+class ProjectDetailsView(UserTemplateMixin,
+                         ProjectTemplateMixin,
+                         TemplateView):
+  template = 'user/project/details.html'
+
+
+
+class ProjectStartView(ProjectTemplateMixin,
+                       ActionView):
   def do(self):
-    projects.startProject(name = self.name)
+    self.project.start()
     
     return self.url('user.project.details',
                     name = self.name)
 
 
 
-class ProjectStopView(ActionView):
+class ProjectStopView(ProjectTemplateMixin,
+                      ActionView):
   def do(self):
-    projects.stopProject(name = self.name)
+    self.project.stop()
     
     return self.url('user.project.details',
                     name = self.name)
+
+
+
+class ProjectAddAdminView(ProjectTemplateMixin,
+                          ActionView):
+  def do(self):
+    # TODO: Pass in username to add
+    self.project.addAdmin(username = None)
+    
+    return self.url('user.project.details',
+                    name = self.name)
+
+
+
+class ProjectRemoveAdminView(ProjectTemplateMixin,
+                             ActionView):
+  def do(self):
+    self.project.removeAdmin(username = login.current_user.id)
+    
+    return self.url('user.index')
     

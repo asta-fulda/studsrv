@@ -27,11 +27,8 @@
                     <i class="fa fa-info"></i>
                     Details
 	                  <span class="pull-right">
-			                  <a class="btn btn-xs btn-primary">
-			                      <i class="fa fa-pencil"></i>
-			                      Bearbeiten
-			                  </a>
-			                  <a class="btn btn-xs btn-danger">
+			                  <a href="{{ url('user.project.admin.remove', name = name) }}"
+			                     class="btn btn-xs btn-danger">
                             <i class="fa fa-trash-o"></i>
                             L&ouml;schen
                         </a>
@@ -142,10 +139,6 @@
                             <i class="fa fa-plus"></i>
                             Hinzuf&uuml;gen
                         </a>
-                        <a class="btn btn-xs btn-danger">
-                            <i class="fa fa-minus"></i>
-                            Entfernen
-                        </a>
                     </span>
                 </h3>
             </div>
@@ -160,7 +153,7 @@
                 <tbody>
                     {% for admin in project.admins %}
                         <tr>
-                            <td>{{admin.id}}</td>
+                            <td>{{admin.username}}</td>
                             <td>{{admin.name}}</td>
                             <td>{{admin.email}}</td>
                         </tr>
@@ -170,7 +163,5 @@
         </div>
     </div>
 </div>
-
-<pre>{{project|pprint}}</pre>
 
 {% endblock %}

@@ -12,27 +12,22 @@ class User(login.UserMixin):
   @property
   def id(self):
     return self.__username
+    
+  
+
+class LoginService(object):
+  def __init__(self):
+    self.__login_manager = login.LoginManager()
   
   
-  @property
-  def username(self):
-    return self.__username
-  
-  
-  @property
-  def email(self):
-    # TODO: Get from LDAP
-    pass
-  
-  
-  @property
-  def name(self):
-    # TODO: Get from LDAP
-    pass
+  def initApplication(self, app):
+    @self.__login_manager.user_loader
+    def get_user(username):
+      return self.getUser(username = username)
+    
+    self.__login_manager.init_app(app)
 
 
-
-class UserService(object):
   def authenticateUser(self,
                        username,
                        password):
@@ -50,4 +45,4 @@ class UserService(object):
     return User(username = username)
 
 
-users = UserService()
+logins = LoginService()
