@@ -1,0 +1,32 @@
+{% extends 'user/base.html' %}
+
+{% from 'forms.html' import render_form %}
+
+{% block content %}
+
+<h2>Projekt erstellen</h2>
+
+<form class="form-horizontal"
+      action=""
+      method="post">
+      
+   {{ render_form(form) }}
+  
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <div class="pull-right">
+        <a href="{{ url('user.index') }}"
+           class="btn btn-default">
+          Abbrechen
+        </a>
+        <button type="submit" class="btn btn-success">
+          <i class="fa fa-plus"></i>
+          Erstellen
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+{% endblock %}

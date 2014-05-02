@@ -61,17 +61,3 @@ body {
 .main .page-header {
   margin-top: 0;
 }
-
-/* Login form */
-.form-signin div.input-group:not(:first-of-type) input {
-  border-top-right-radius: 0 !important;
-}
-.form-signin div.input-group:not(:first-of-type) span {
-  border-top-left-radius: 0 !important;
-}
-.form-signin div.input-group:not(:last-of-type) input {
-  border-bottom-right-radius: 0 !important;
-}
-.form-signin div.input-group:not(:last-of-type) span {
-  border-bottom-left-radius: 0 !important;
-}

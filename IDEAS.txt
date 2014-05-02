@@ -1,0 +1,14 @@
+* Allow FTP access
+  - Hard-Link the project data folders of the projects on which the user is
+    administrator into the users folder
+  - Jail-root the ftp session into the users folder
+
+* Allow SSH access to the projects
+  - Enforce executed command to some kind of ssh-proxy into the projects
+    container
+
+* Allow access to the project containers log
+  - Write the log to the project data folder
+  - Make the logs read-only
+  - Rotate the log files using log-rotate
+  - Exclude the logs from quota

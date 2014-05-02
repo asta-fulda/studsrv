@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block sidebar %}
+
+{% if projects %}
+  <ul class="nav nav-sidebar">
+    {% for project in projects %}
+      <li class="{% if project == name %}active{% endif %}">
+        <a href="{{ url('user.project.details', name = project) }}">{{project}}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+{% if projects|length < 5 %}
+  <ul class="nav nav-sidebar">
+    <li><a href="{{ url('user.project.create') }}">
+      <i class="fa fa-plus text-success"></i>
+      Projekt erstellen
+    </a></li>
+  </ul>
+{% endif %}
+
+{% endblock %}
