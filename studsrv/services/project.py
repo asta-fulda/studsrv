@@ -198,7 +198,7 @@ class Project(object):
     admin = Admin(record = record)
     
     # Ensure the user subvolume does exists
-    if not os.path.isdir(self.volume):
+    if not os.path.isdir(admin.volume):
       btrfs.subvolume.create(admin.volume)
       
     # Bind the projects subvolume to the users subvolume
@@ -268,6 +268,8 @@ class Project(object):
     ''' Deletes this project. '''
     
     # TODO: Delete all admins first
+    
+    self.stop()
     
     # Delete the projects subvolume
     btrfs.subvolume.delete(self.volume)
