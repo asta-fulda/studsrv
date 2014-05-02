@@ -1,29 +1,21 @@
+import configparser
 
 
 
 class ConfigService(object):
   def __init__(self):
-    pass
-  
+    parser = configparser.RawConfigParser()
+    parser.read('/etc/studsrv/config.ini')
+    
+    self.__configs = {}
+    
+    for section in parser.sections():
+      for key in parser[section]:
+        self.__configs['%s_%s' % (section, key)] = parser[section][key] 
+    
   
   def __getattr__(self, name):
-    # TODO lookup in application configuration
-    if name == 'users_volume':
-      return '/mnt/users'
-    
-    if name == 'projects_volume':
-      return '/mnt/projects'
-    
-    if name == 'projects_hostname_pattern':
-      return '%s.stud-new.hs-fulda.org'
-    
-    if name == 'project_url_pattern':
-      return 'http://%s.stud-new.hs-fulda.org'
-    
-    if name == 'project_quota':
-      return '1g'
-    
-    raise None
+    return self.__configs[name]
 
 
 configs = ConfigService()

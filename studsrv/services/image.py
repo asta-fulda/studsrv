@@ -26,7 +26,7 @@ class ImageService(object):
   
   
   def __init__(self):
-    parser = configparser.SafeConfigParser()
+    parser = configparser.RawConfigParser()
     parser.read('/etc/studsrv/images.ini')
     
     self.__images = {name: Image(name = name,

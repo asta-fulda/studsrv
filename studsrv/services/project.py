@@ -140,7 +140,7 @@ class Project(object):
     ''' Returns the projects URL.
     '''
     
-    return configs.project_url_pattern % self.name
+    return configs.projects_url_pattern % self.name
   
   
   @property
@@ -307,7 +307,7 @@ class ProjectService(object):
       btrfs.subvolume.create(project.volume)
     
       # Set the quota for the projects subvolume
-      btrfs.qgroup.limit(configs.project_quota,
+      btrfs.qgroup.limit(configs.projects_quota,
                          project.volume)
     
     # Create a container for the project
