@@ -11,6 +11,10 @@
 <div class="row">
 	<form class="form-signin col-md-offset-4 col-md-4"
 	      method="post">
+	  <input type="hidden"
+	         name="next"
+	         value="{{next}}">
+	  
 	  <div class="input-group {% if form.errors %}has-error{% endif %}">
 	    <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
 		  <input type="text"

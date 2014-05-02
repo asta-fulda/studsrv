@@ -25,6 +25,8 @@ class LoginService(object):
     def get_user(username):
       return self.getUser(username = username)
     
+    self.__login_manager.login_view = 'login'
+    
     self.__login_manager.init_app(app)
 
 

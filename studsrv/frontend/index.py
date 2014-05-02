@@ -23,6 +23,9 @@ class LoginView(FormView):
     
     remember = fields.BooleanField()
     
+    next = fields.TextField()
+    
+    
     def validate_password(self, field):
       if not logins.authenticateUser(username = self.username.data,
                                     password = self.password.data):
@@ -32,13 +35,18 @@ class LoginView(FormView):
   def valid(self,
             username,
             password,
-            remember):
+            remember,
+            next):
     # Get the user instance
     user = logins.getUser(username = username)
     
     # Login
     login.login_user(user = user,
                      remember = remember)
+    
+    # Redirect to next url if it's provided
+    if next:
+      return next
     
     return self.url('user.index')
 

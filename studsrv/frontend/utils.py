@@ -40,6 +40,10 @@ class TemplateView(ViewMixin, View):
     # Update the instance with the request values
     self.__dict__.update(values)
     
+    # Update the instance with the query values
+    for key, values in request.args.items():
+      self.__dict__[key] = values
+    
     # Render the template
     return render_template(self.template,
                            **{name : getattr(self, name)
