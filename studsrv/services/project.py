@@ -282,6 +282,14 @@ class Project(object):
     db.session.commit()
     
     logging.warn('Project Deleted: %s', self.name)
+  
+  
+  @property
+  def logs(self):
+    ''' Returns the log messages produced by the project.
+    '''
+    
+    return client.logs(container = self.__record.container_id)
 
 
 

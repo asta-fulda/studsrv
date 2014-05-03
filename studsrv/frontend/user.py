@@ -117,6 +117,16 @@ class ProjectStopView(ProjectTemplateMixin,
 
 
 
+class ProjectDeleteView(ProjectTemplateMixin,
+                        ActionView):
+  def do(self):
+    self.project.delete()
+    
+    return self.url('user.index',
+                    name = self.name)
+
+
+
 class ProjectAddAdminView(ProjectTemplateMixin,
                           ActionView):
   def do(self):
