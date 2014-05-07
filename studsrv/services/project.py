@@ -289,7 +289,7 @@ class Project(object):
     db.session.delete(self.__record)
     db.session.commit()
     
-    logging.warn('Project Deleted: %s', self.name)
+    logging.info('Project Deleted: %s', self.name)
   
   
   @property
@@ -339,7 +339,7 @@ class ProjectService(object):
     
     project.addAdmin(username = username)
     
-    logging.warning('Project created: name=%s', name)
+    logging.info('Project created: name=%s', name)
     
     return project
   

@@ -2,47 +2,37 @@ import socket
 import traceback
 import dnslib as dns
 
+from studsrv.services.config import configs
 from studsrv.services.project import projects
 
 
 
-port = 10053
-domain = dns.DNSLabel('stud.x.hs-fulda.org')
-ttl = 60
-
-
-
 def main():
+  # Open a socket listening for DNS requests
   server = socket.socket(socket.AF_INET,
                          socket.SOCK_DGRAM)
-  server.bind(('localhost', port))
+  server.bind((configs.dns_host,
+               int(configs.dns_port)))
 
-  try:
-    while True:
+  # Build the servers root domain label
+  domain = dns.DNSLabel(configs.dns_domain)
+
+  while True:
+    try:
+      # Read the request packet
       pkt, adr = server.recvfrom(512)
 
+      # Parse the request
       request = dns.DNSRecord.parse(pkt)
-      print(request)
 
+      # Build the response for the request
       response = dns.DNSRecord(dns.DNSHeader(id = request.header.id,
                                              qr = 1,
                                              aa = 1,
                                              ra = 1),
                                q = request.q)
 
-#      response.add_ns(dns.RR(rname = domain,
-#                             rtype = dns.QTYPE.NS,
-#                             rclass = 1,
-#                             ttl = ttl,
-#                             rdata = dns.NS(dns.DNSLabel('localhost'))))
-#
-#      response.add_ns(dns.RR(rname = domain,
-#                             rtype = dns.QTYPE.SOA,
-#                             rclass = 1,
-#                             ttl = ttl,
-#                             rdata = dns.SOA(mname = dns.DNSLabel('localhost'),
-#                                             rname = domain.add('edv'))))
-
+      # Try to find the project named by the suffix of the requested address
       project = None
       if (dns.QTYPE[request.q.qtype] == 'A' and
           dns.CLASS[request.q.qclass] == 'IN' and
@@ -50,24 +40,29 @@ def main():
         # Get the domains prefix and strip of the trailing dot
         name = str(request.q.qname.stripSuffix(domain))[:-1]
 
+        # Look the project up in the database
         project = projects.getProject(name = name)
 
+      # Build the answer with the IP of the project
       if project is not None:
         response.add_answer(dns.RR(rname = request.q.qname,
                                    rtype = request.q.qtype,
                                    rclass = request.q.qclass,
-                                   ttl = ttl,
+                                   ttl = int(configs.dns_ttl),
                                    rdata = dns.A(project.ip)))
 
-      print(response)
-
+      # Send out the response
       server.sendto(response.pack(),
                     adr)
 
-  except:
-    traceback.print_exc()
+    except KeyboardInterrupt:
+      break
 
-    server.close()
+    except:
+      traceback.print_exc()
+
+  # Close the socket in any case
+  server.close()
 
 
 if __name__ == '__main__':
