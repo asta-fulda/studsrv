@@ -1,11 +1,4 @@
 from studsrv.frontend import app
-from studsrv import db
-
-
-
-@app.teardown_appcontext
-def shutdown_session(exception = None):
-    db.session.remove()
 
 
 

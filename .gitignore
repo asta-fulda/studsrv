@@ -3,5 +3,6 @@
 .project
 .pydevproject
 .settings/
+.idea
 __pycache__/
 db.sqlite3

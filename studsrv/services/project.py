@@ -175,6 +175,14 @@ class Project(object):
     '''
     
     return datetime.now(tz = pytz.utc) - self.started
+
+
+  @property
+  def ip(self):
+    ''' Returns the containers IP, iff the projects container is running.
+    '''
+
+    return self.__container['NetworkSettings']['IPAddress']
   
   
   @property
@@ -331,13 +339,13 @@ class ProjectService(object):
     
     project.addAdmin(username = username)
     
-    logging.warn('Project created: name=%s', name)
+    logging.warning('Project created: name=%s', name)
     
     return project
   
   
-  def getProjects(self,
-                  username):
+  def getProjectsForUser(self,
+                         username):
     ''' Returns the list of project names for the given username.
     '''
     
@@ -345,15 +353,32 @@ class ProjectService(object):
       yield record.id
   
   
-  def getProject(self,
-                 username,
-                 name):
-    ''' Returns the project with the given name for the given username. '''
+  def getProjectForUser(self,
+                        username,
+                        name):
+    ''' Returns the project with the given name for the given username.
+    '''
     
     record = db.Project.query.join(db.Admin).filter(db.Admin.id == username,
                                                     db.Project.id == name).one()
+
+    if record is None:
+      return None
     
     return Project(record = record)
-  
+
+
+  def getProject(self,
+                 name):
+    ''' Returns the project with the given name.
+    '''
+
+    record = db.Project.query.get(name)
+
+    if record is None:
+      return None
+
+    return Project(record = record)
+
   
 projects = ProjectService()

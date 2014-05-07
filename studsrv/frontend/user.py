@@ -12,7 +12,7 @@ from studsrv.services.project import projects
 class UserTemplateMixin(object):
   @property
   def projects(self):
-    return list(projects.getProjects(username = login.current_user.id))
+    return list(projects.getProjectsForUser(username = login.current_user.id))
 
 
 
@@ -85,8 +85,8 @@ class ProjectCreateView(UserTemplateMixin,
 class ProjectTemplateMixin(object):
   @property
   def project(self):
-    return projects.getProject(username = login.current_user.id,
-                               name = self.name)
+    return projects.getProjectForUser(username = login.current_user.id,
+                                      name = self.name)
 
 
 
