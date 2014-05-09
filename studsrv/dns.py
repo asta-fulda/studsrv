@@ -1,5 +1,6 @@
 import socket
 import traceback
+
 import dnslib as dns
 
 from studsrv.services.config import configs

@@ -10,6 +10,7 @@ import docker
 from studsrv import db
 
 from studsrv.services.config import configs
+from studsrv.services.login import logins
 from studsrv.services.image import images
 
 
@@ -22,6 +23,8 @@ class Admin(object):
   def __init__(self,
                record):
     self.__record = record
+
+    self.__user = logins.getUser(self.__record.id)
   
   
   @property
@@ -29,7 +32,7 @@ class Admin(object):
     ''' Returns the username of the user.
     '''
     
-    return str(self.__record.id)
+    return str(self.__user.id)
   
   
   @property
@@ -37,8 +40,7 @@ class Admin(object):
     ''' Returns the email address of the user.
     '''
     
-    # TODO: Get from LDAP
-    pass
+    return self.__user.email
   
   
   @property
@@ -46,8 +48,7 @@ class Admin(object):
     ''' Returns the full name of the user.
     '''
     
-    # TODO: Get from LDAP
-    pass
+    return self.__user.name
     
   
   @property
@@ -55,8 +56,7 @@ class Admin(object):
     ''' Returns the path to the users volume.
     '''
     
-    return os.path.join(configs.users_volume,
-                        self.username)
+    return self.__user.volume
   
 
 
@@ -204,10 +204,6 @@ class Project(object):
     record = self.__record.admins[username] = db.Admin(id = username)
     
     admin = Admin(record = record)
-    
-    # Ensure the user subvolume does exists
-    if not os.path.isdir(admin.volume):
-      btrfs.subvolume.create(admin.volume)
       
     # Bind the projects subvolume to the users subvolume
     os.symlink(self.volume,
@@ -216,7 +212,7 @@ class Project(object):
     
     db.session.commit()
     
-    logging.warn('Admin added: project=%s, user=%s', self.name, username)
+    logging.info('Admin added: project=%s, user=%s', self.name, username)
     
     return admin
   
@@ -242,7 +238,7 @@ class Project(object):
     
     db.session.commit()
     
-    logging.warn('Admin removed: project=%s, user=%s', self.name, username)
+    logging.info('Admin removed: project=%s, user=%s', self.name, username)
   
   
   def start(self):
